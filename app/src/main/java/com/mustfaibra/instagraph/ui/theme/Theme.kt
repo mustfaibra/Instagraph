@@ -1,6 +1,5 @@
 package com.mustfaibra.instagraph.ui.theme
 
-import android.hardware.lights.Light
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -16,8 +15,8 @@ private val DarkColorPalette = darkColors(
     surface = Color.White,
     onPrimary = LightGray,
     onSecondary = LightGray,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+    onBackground = Black,
+    onSurface = Black,
 )
 
 private val LightColorPalette = lightColors(
@@ -28,8 +27,8 @@ private val LightColorPalette = lightColors(
     surface = Color.White,
     onPrimary = LightGray,
     onSecondary = LightGray,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+    onBackground = Black,
+    onSurface = Black,
 )
 
 @Composable

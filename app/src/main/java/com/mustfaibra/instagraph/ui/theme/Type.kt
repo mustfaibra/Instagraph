@@ -4,18 +4,17 @@ import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.mustfaibra.instagraph.R
 
 val font = FontFamily(
-    Font(resId = R.font.readex_extra_light, weight = FontWeight.ExtraLight, style = FontStyle.Normal),
-    Font(resId = R.font.readex_light, weight = FontWeight.Light, style = FontStyle.Normal),
-    Font(resId = R.font.readex_regular, weight = FontWeight.Normal, style = FontStyle.Normal),
-    Font(resId = R.font.readex_medium, weight = FontWeight.Medium, style = FontStyle.Normal),
-    Font(resId = R.font.readex_semi_bold, weight = FontWeight.SemiBold, style = FontStyle.Normal),
-    Font(resId = R.font.readex_bold, weight = FontWeight.Bold, style = FontStyle.Normal),
+    Font(resId = R.font.readex_extra_light, weight = FontWeight.ExtraLight),
+    Font(resId = R.font.readex_light, weight = FontWeight.Light),
+    Font(resId = R.font.readex_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.readex_medium, weight = FontWeight.Medium),
+    Font(resId = R.font.readex_semi_bold, weight = FontWeight.SemiBold),
+    Font(resId = R.font.readex_bold, weight = FontWeight.Bold),
 )
 
 // Set of Material typography styles to start with

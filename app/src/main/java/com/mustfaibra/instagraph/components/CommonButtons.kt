@@ -74,7 +74,7 @@ fun DrawableButton(
     onButtonClicked: () -> Unit,
     painter: Painter,
     shape: Shape = MaterialTheme.shapes.medium,
-    iconSize: Dp = Dimension.mdIcon,
+    iconSize: Dp = Dimension.mdIcon.times(0.8f),
     elevation: Dp = Dimension.zero,
     paddingValue: PaddingValues = PaddingValues(Dimension.xs),
 ) {

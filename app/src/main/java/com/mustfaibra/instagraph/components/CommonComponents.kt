@@ -202,12 +202,13 @@ fun AppBottomNavItem(
             .padding(Dimension.xs),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+
         Box(
             modifier = Modifier
                 .size(Dimension.xs)
                 .clip(CircleShape)
                 .background(
-                    if (destination is Screen.Notifications && active) BrightRed
+                    if (destination is Screen.Notifications && !active) BrightRed
                     else Color.Transparent
                 )
         )

@@ -42,7 +42,7 @@ fun HolderScreen(
             NavHost(
                 modifier = Modifier.weight(1f),
                 navController = controller,
-                startDestination = Screen.Splash.route
+                startDestination = Screen.Login.route
             ) {
                 composable(Screen.Splash.route) {
                     onStatusBarColorChange(MaterialTheme.colors.background)

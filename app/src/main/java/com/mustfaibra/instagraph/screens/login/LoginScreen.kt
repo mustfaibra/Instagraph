@@ -3,15 +3,7 @@ package com.mustfaibra.instagraph.screens.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -48,6 +40,8 @@ fun LoginScreen(
     ) {
         val controller = LocalNavHost.current
         val uiState by remember { loginViewModel.uiState }
+        val user = loginViewModel.recentUser
+
         val loginButtonText = when (uiState) {
             is UiState.Loading -> {
                 "Logging now ..."
@@ -66,22 +60,21 @@ fun LoginScreen(
         ) {
 
             /** First we put the logo */
-            Text(
-                text = "Instagraph",
-                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.ExtraBold),
-                fontFamily = FontFamily.Cursive,
+            Image(
+                painter = painterResource(id = R.drawable.ic_instagram_logo_word),
+                contentDescription = "profile image",
             )
             Spacer(modifier = Modifier.height(Dimension.pagePadding.times(3)))
             /** Then the user's profile image */
             Image(
-                painter = painterResource(id = R.drawable.ic_meta),
+                painter = painterResource(id = user.profile),
                 contentDescription = "profile image",
-                modifier = Modifier.size(Dimension.xlIcon)
+                modifier = Modifier.size(Dimension.xlIcon.times(1.3f)).clip(CircleShape),
             )
             Spacer(modifier = Modifier.height(Dimension.pagePadding))
             /** The the user's name */
             Text(
-                text = "mustfa_ibra",
+                text = user.userName,
                 style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(Dimension.pagePadding))

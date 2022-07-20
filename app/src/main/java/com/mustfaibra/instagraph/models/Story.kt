@@ -2,6 +2,6 @@ package com.mustfaibra.instagraph.models
 
 data class Story(
     val id: Int,
-    val url: String,
+    val url: Int,
     val user: User,
 )
