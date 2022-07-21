@@ -15,4 +15,12 @@
     <string name="profile">Profile</string>
     <string name="continue_next">Continue</string>
     <string name="add_post">Add Post</string>
+    <string name="igtv">IGTV</string>
+    <string name="nature">Nature</string>
+    <string name="culture">Culture</string>
+    <string name="anime">Anime</string>
+    <string name="auto">Auto</string>
+    <string name="sports">Sports</string>
+    <string name="style">Style</string>
+    <string name="shop">Shop</string>
 </resources>
