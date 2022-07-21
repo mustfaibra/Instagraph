@@ -263,7 +263,7 @@ fun StoryItemLayout(
         ) {
             /** Then the story's image */
             Image(
-                painter = rememberImagePainter(data = story.url),
+                painter = rememberImagePainter(data = story.user.profile),
                 contentDescription = "story image",
                 modifier = Modifier
                     .size(Dimension.xlIcon.times(0.6f))
@@ -391,8 +391,8 @@ fun PostItemLayout(
         /** Now, the exciting part, the post's image/images with the reactions */
         PostImagesWithReactions(
             images = images,
-            onPostLikeChange = {},
-            onPostBookmarkChange = {},
+            onPostLikeChange = onPostLikeChange,
+            onPostBookmarkChange = onPostBookmarkChange,
         )
         ReactsWithCaption(
             recentReactUser = recentReactUser,
@@ -542,10 +542,10 @@ fun ReactsWithCaption(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimension.pagePadding.div(2))
-        ) {
+        ){
             Image(
                 painter = painterResource(id = recentReactUser.profile),
-                contentDescription = "post image",
+                contentDescription = "post's owner image",
                 modifier = Modifier
                     .size(Dimension.mdIcon.times(0.7f))
                     .clip(CircleShape),

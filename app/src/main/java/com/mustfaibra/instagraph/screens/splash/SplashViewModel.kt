@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.mustfaibra.instagraph.data.fake.FakeServicesImpl
 import com.mustfaibra.instagraph.sealed.UiState
 import com.mustfaibra.instagraph.utils.APP_LAUNCHED
 import com.mustfaibra.instagraph.utils.dataStore
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @SuppressLint("StaticFieldLeak")
 class SplashViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val fakeServicesImpl: FakeServicesImpl,
 ) : ViewModel() {
     val uiState = mutableStateOf<UiState>(UiState.Idle)
 

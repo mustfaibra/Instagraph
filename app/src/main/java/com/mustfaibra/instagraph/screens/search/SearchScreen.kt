@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,9 +33,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustfaibra.instagraph.R
 import com.mustfaibra.instagraph.components.CustomInputField
 import com.mustfaibra.instagraph.components.DrawableButton
+import com.mustfaibra.instagraph.components.LazyStaggeredGrid
+import com.mustfaibra.instagraph.components.PostGridItem
 import com.mustfaibra.instagraph.ui.theme.Blue
 import com.mustfaibra.instagraph.ui.theme.Dimension
 import com.mustfaibra.instagraph.ui.theme.Gray
+import timber.log.Timber
 
 @Composable
 fun SearchScreen(
@@ -46,9 +50,11 @@ fun SearchScreen(
             .background(MaterialTheme.colors.background),
         verticalArrangement = Arrangement.spacedBy(Dimension.sm),
     ) {
-        val searchQuery by remember { searchViewModel.searchQuery }
+        val searchQuery by remember { searchViewModel.lastSearchQuery }
         val searchFilters = remember { searchViewModel.filters }
         val activeFilters = searchViewModel.activeFilters
+        val trendingPosts = searchViewModel.trendingPosts
+        val trendingPostsUiState = searchViewModel.trendingPostsUiState
 
         /** The search input at the top of the screen */
         Row(
@@ -116,6 +122,24 @@ fun SearchScreen(
                 )
             }
         }
+        /** Then the images grids */
+        LazyStaggeredGrid(
+            columnCount = 3,
+            contentPadding = PaddingValues(1.dp)
+        ) {
+            trendingPosts.shuffled().forEach {
+                item {
+                    PostGridItem(
+                        modifier = Modifier.padding(1.dp).fillMaxWidth(),
+                        cover = it.images.first(),
+                        imagesCount = it.images.size,
+                        onPostClicked = {
+
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -130,8 +154,8 @@ fun SearchFilterLayout(name: String, icon: Int?, isActive: Boolean, onActiveChan
             )
             .border(
                 width = 1.dp,
-                color = if(isActive) Blue
-                    else MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                color = if (isActive) Blue
+                else MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
                 shape = MaterialTheme.shapes.small
             )
             .clickable(
@@ -139,7 +163,7 @@ fun SearchFilterLayout(name: String, icon: Int?, isActive: Boolean, onActiveChan
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
             )
-            .padding(Dimension.pagePadding.div(2)),
+            .padding(horizontal = Dimension.pagePadding.div(2), vertical = Dimension.xs),
         horizontalArrangement = Arrangement.spacedBy(Dimension.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {

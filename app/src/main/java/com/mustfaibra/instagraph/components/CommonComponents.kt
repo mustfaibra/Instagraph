@@ -1,7 +1,9 @@
 package com.mustfaibra.instagraph.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
@@ -24,6 +26,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import com.mustfaibra.instagraph.R
+import com.mustfaibra.instagraph.UserSession
 import com.mustfaibra.instagraph.sealed.Screen
 import com.mustfaibra.instagraph.ui.theme.BrightRed
 import com.mustfaibra.instagraph.ui.theme.Dimension
@@ -196,9 +200,11 @@ fun AppBottomNavItem(
         modifier = modifier
             .clip(CircleShape)
             .background(Color.Transparent)
-            .clickable {
-                onRouteClicked()
-            }
+            .clickable(
+                onClick = onRouteClicked,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .padding(Dimension.xs),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -213,12 +219,55 @@ fun AppBottomNavItem(
                 )
         )
         Spacer(modifier = Modifier.height(Dimension.xs))
-        Icon(
-            painter = painterResource(id = destination.icon ?: R.drawable.ic_home_empty),
-            contentDescription = null,
-            tint = if (active) MaterialTheme.colors.onBackground
-            else MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
-            modifier = Modifier.size(Dimension.mdIcon.times(0.8f)),
+        if (destination is Screen.Profile) {
+            /** If the destination is the profile screen, show user's profile image */
+            Image(
+                painter = painterResource(id = UserSession.user?.profile ?: R.drawable.ic_user),
+                contentDescription = "post's owner image",
+                modifier = Modifier
+                    .size(Dimension.mdIcon.times(0.8f))
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+            )
+        } else {
+            /** If the destination is not the profile then just show it's icon */
+            Icon(
+                painter = painterResource(id = destination.icon ?: R.drawable.ic_home_empty),
+                contentDescription = null,
+                tint = if (active) MaterialTheme.colors.onBackground
+                else MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
+                modifier = Modifier.size(Dimension.mdIcon.times(0.8f)),
+            )
+        }
+    }
+}
+
+@Composable
+fun PostGridItem(
+    modifier: Modifier = Modifier,
+    cover: Int,
+    imagesCount: Int,
+    onPostClicked: () -> Unit,
+) {
+    Box(
+        modifier = modifier.clickable { onPostClicked() },
+    ) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(id = cover),
+            contentDescription = "post-cover",
+            contentScale = ContentScale.Crop,
         )
+        if (imagesCount > 1) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_group),
+                contentDescription = "group",
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(Dimension.sm)
+                    .size(Dimension.smIcon),
+                tint = MaterialTheme.colors.background,
+            )
+        }
     }
 }
