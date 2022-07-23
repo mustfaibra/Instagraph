@@ -1,11 +1,15 @@
 package com.mustfaibra.instagraph.data.fake
 
 import com.mustfaibra.instagraph.R
+import com.mustfaibra.instagraph.models.MyNotification
 import com.mustfaibra.instagraph.models.Post
 import com.mustfaibra.instagraph.models.PostReacts
 import com.mustfaibra.instagraph.models.Story
 import com.mustfaibra.instagraph.models.User
 import com.mustfaibra.instagraph.sealed.DataResponse
+import com.mustfaibra.instagraph.sealed.NotificationType
+import kotlinx.coroutines.delay
+import java.util.*
 import kotlin.random.Random
 
 class FakeServicesImpl : FakeServices {
@@ -96,6 +100,81 @@ class FakeServicesImpl : FakeServices {
                     user = it
                 )
             }
+        )
+    }
+
+    override suspend fun getFakeNotifications(): DataResponse<List<MyNotification>> {
+        delay(3000)
+        val milliSecondsInDay = 24 * 60 * 60 * 1000
+        val milliSecondsInHour = 60 * 60 * 1000
+        val todayDateAsLong = Date().time
+        val yesterdayDateAsLong = Date().time.minus(milliSecondsInDay)
+
+        /** now we return the fake notifications for today and yesterday */
+        return DataResponse.Success(
+            data = listOf(
+                MyNotification(
+                    id = 1,
+                    type = NotificationType.FollowNotification(
+                        user = users[0],
+                        followed = true,
+                    ),
+                    time = todayDateAsLong
+                ),
+                MyNotification(
+                    id = 3,
+                    type = NotificationType.ReactsNotification(
+                        postId = posts[1].id,
+                        postCoverUrl = posts[1].images.first(),
+                        postReacts = PostReacts(
+                            recentUser = users[2],
+                            othersCount = Random.nextInt(100, 12000)
+                        ),
+                    ),
+                    time = todayDateAsLong.minus(2 * milliSecondsInHour)
+                ),
+                MyNotification(
+                    id = 4,
+                    type = NotificationType.MentionNotification(
+                        user = users[3],
+                        postId = posts[1].id,
+                        commentId = 1,
+                        comment = "Exactly! 🤩"
+                    ),
+                    time = todayDateAsLong.minus(3 * milliSecondsInHour)
+                ),
+
+                MyNotification(
+                    id = 5,
+                    type = NotificationType.FollowNotification(
+                        user = users[3],
+                        followed = false,
+                    ),
+                    time = yesterdayDateAsLong
+                ),
+                MyNotification(
+                    id = 7,
+                    type = NotificationType.ReactsNotification(
+                        postId = posts[2].id,
+                        postCoverUrl = posts[2].images.first(),
+                        postReacts = PostReacts(
+                            recentUser = users[2],
+                            othersCount = Random.nextInt(100, 12000)
+                        ),
+                    ),
+                    time = yesterdayDateAsLong.minus(2 * milliSecondsInHour)
+                ),
+                MyNotification(
+                    id = 8,
+                    type = NotificationType.MentionNotification(
+                        user = users[1],
+                        postId = posts[2].id,
+                        commentId = 2,
+                        comment = "Thank you man ❤️"
+                    ),
+                    time = yesterdayDateAsLong.minus(3 * milliSecondsInHour)
+                ),
+            )
         )
     }
 

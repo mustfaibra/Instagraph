@@ -4,7 +4,9 @@ package com.mustfaibra.instagraph.components
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -225,14 +227,16 @@ fun CustomButton(
     contentColor: Color,
     padding: PaddingValues = PaddingValues(vertical = Dimension.sm, horizontal = Dimension.sm),
     shape: Shape = MaterialTheme.shapes.medium,
+    borderStroke: BorderStroke = BorderStroke(width = Dimension.zero, color = Color.Transparent),
     text: String,
     textStyle: TextStyle = MaterialTheme.typography.button,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
     onButtonClicked: () -> Unit,
 ) {
-    Button(
+    OutlinedButton(
         modifier = modifier,
+        border = borderStroke,
         onClick = {
             onButtonClicked()
         },
@@ -253,12 +257,13 @@ fun CustomButton(
     ) {
         leadingIcon()
         Text(
-            modifier = Modifier.padding(horizontal = Dimension.sm),
+            modifier = Modifier.padding(horizontal = Dimension.pagePadding.div(2)),
             text = text,
             textAlign = TextAlign.Center,
             style = textStyle,
             color = contentColor,
         )
+        /** Add trailing icon */
         /** Add trailing icon */
         trailingIcon()
     }

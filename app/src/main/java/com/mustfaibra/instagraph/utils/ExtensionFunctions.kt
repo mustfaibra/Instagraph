@@ -22,6 +22,7 @@ import io.ktor.client.statement.*
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 
 /** An extension function that is used to convert the API response to a JSONObject & return the field message from it */
@@ -66,6 +67,16 @@ fun Modifier.mirror(): Modifier {
         /** If is ltr , just forget about this amigo ! */
         else -> this
     }
+}
+
+
+/** An extension function on Date's object that is used to get a formatted date & time.
+ * It takes the pattern that you want.
+ * Shortcuts: yyyy: year , MM: month , dd: day , HH: hour , mm: minutes.
+ */
+fun Long.getFormattedDate(pattern: String): String {
+    val simpleDateFormat = SimpleDateFormat(pattern, Locale.ENGLISH)
+    return simpleDateFormat.format(Calendar.getInstance().also { it.timeInMillis = this }.time)
 }
 
 

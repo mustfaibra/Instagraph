@@ -9,7 +9,9 @@ data class Post(
     val reacts: PostReacts,
     val date: String = "2 days ago",
     val likedByMe: Boolean = false,
-)
+){
+
+}
 
 data class PostReacts(
     val recentUser: User,
