@@ -1,12 +1,15 @@
 package com.mustfaibra.instagraph.data.fake
 
 import com.mustfaibra.instagraph.R
+import com.mustfaibra.instagraph.UserSession
+import com.mustfaibra.instagraph.models.Featured
 import com.mustfaibra.instagraph.models.MyNotification
 import com.mustfaibra.instagraph.models.Post
 import com.mustfaibra.instagraph.models.PostReacts
 import com.mustfaibra.instagraph.models.Story
 import com.mustfaibra.instagraph.models.User
 import com.mustfaibra.instagraph.sealed.DataResponse
+import com.mustfaibra.instagraph.sealed.Error
 import com.mustfaibra.instagraph.sealed.NotificationType
 import kotlinx.coroutines.delay
 import java.util.*
@@ -58,38 +61,35 @@ class FakeServicesImpl : FakeServices {
     init {
         /** Creating the fake posts */
         images.forEachIndexed { index, image ->
-            for (user in users) {
-                val currentIndex = (index * users.size).plus(user.userId)
-                posts.add(
-                    Post(
-                        id = currentIndex,
-                        user = user,
-                        location = listOf(
-                            "Tokyo, Japan",
-                            "CA, USA",
-                            "Khartoum, Sudan",
-                            "Madrid, Spain",
-                            "Berlin, German",
-                        ).random(),
-                        images = images.shuffled().take((Random.nextInt(1, 5))),
-                        caption = listOf(
-                            "Good Morning ❤️",
-                            "Good Evening 🤩✨",
-                            "Do you feel that? 🤩❤️",
-                            "New era, new me ! 🔥",
-                            "On fire ! 🔥🔥🔥"
-                        ).random(),
-                        reacts = PostReacts(
-                            recentUser = User(
-                                userId = 5,
-                                userName = "ed_sheeran",
-                                profile = R.drawable.ed_sheeran,
-                            ),
-                            othersCount = (Math.random() * 100000).toInt(),
+            posts.add(
+                Post(
+                    id = index,
+                    user = users.random(),
+                    location = listOf(
+                        "Tokyo, Japan",
+                        "CA, USA",
+                        "Khartoum, Sudan",
+                        "Madrid, Spain",
+                        "Berlin, German",
+                    ).random(),
+                    images = images.shuffled().take((Random.nextInt(1, 5))),
+                    caption = listOf(
+                        "Good Morning ❤️",
+                        "Good Evening 🤩✨",
+                        "Do you feel that? 🤩❤️",
+                        "New era, new me ! 🔥",
+                        "On fire ! 🔥🔥🔥"
+                    ).random(),
+                    reacts = PostReacts(
+                        recentUser = User(
+                            userId = 5,
+                            userName = "ed_sheeran",
+                            profile = R.drawable.ed_sheeran,
                         ),
-                    )
+                        othersCount = (Math.random() * 100000).toInt(),
+                    ),
                 )
-            }
+            )
         }
         /** Creating the fake stories */
         stories.addAll(
@@ -103,8 +103,29 @@ class FakeServicesImpl : FakeServices {
         )
     }
 
-    override suspend fun getFakeNotifications(): DataResponse<List<MyNotification>> {
+    override suspend fun signInUser(email: String, password: String): DataResponse<User> {
+        /** Faking the process of authenticating actual user, wait for 3 seconds and then go */
         delay(3000)
+        return DataResponse.Success(
+            data = User(
+                userId = 1,
+                name = "Mustafa Ibrahim",
+                userName = "mustfaibra",
+                email = email,
+                profile = R.drawable.mustapha_profile,
+                token = "fake-token-baby-haha",
+                followers = users,
+                following = users,
+            ).also { user ->
+                user.posts = posts.map { post -> post.copy(user = user) }
+            }
+        )
+    }
+
+    override suspend fun getFakeNotifications(): DataResponse<List<MyNotification>> {
+        /** Wait for 4 seconds to simulate the loading from server process */
+        delay(4000)
+
         val milliSecondsInDay = 24 * 60 * 60 * 1000
         val milliSecondsInHour = 60 * 60 * 1000
         val todayDateAsLong = Date().time
@@ -182,12 +203,27 @@ class FakeServicesImpl : FakeServices {
         return DataResponse.Success(data = posts)
     }
 
-    override suspend fun getFakeFollowers(): DataResponse<List<User>> {
-        return DataResponse.Success(data = users)
+    override suspend fun getFakeStories(): DataResponse<List<Story>> {
+        /** Wait for 4 seconds to simulate the loading from server process */
+        delay(4000)
+        return DataResponse.Success(data = stories)
     }
 
-    override suspend fun getFakeStories(): DataResponse<List<Story>> {
-        return DataResponse.Success(data = stories)
+    override suspend fun getFakeFeaturedStories(): DataResponse<List<Featured>> {
+        /** Wait for 4 seconds to simulate the loading from server process */
+        delay(4000)
+        return UserSession.user?.let {
+            DataResponse.Success(
+                data = images.mapIndexed { index, drawable ->
+                    Featured(
+                        id = index,
+                        user = it,
+                        title = "Feat $index",
+                        images = listOf(drawable),
+                    )
+                }
+            )
+        } ?: DataResponse.Error(error = Error.Network)
     }
 
     override suspend fun findStoryById(storyId: Int): DataResponse<Story?> {

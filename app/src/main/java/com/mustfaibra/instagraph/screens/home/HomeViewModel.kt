@@ -12,7 +12,9 @@ import com.mustfaibra.instagraph.repositories.StoryRepository
 import com.mustfaibra.instagraph.sealed.DataResponse
 import com.mustfaibra.instagraph.sealed.Error
 import com.mustfaibra.instagraph.sealed.UiState
+import com.mustfaibra.instagraph.utils.appendOrRemove
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +31,9 @@ class HomeViewModel @Inject constructor(
 
     val postsUiState = mutableStateOf<UiState>(UiState.Idle)
     val posts: MutableList<Post> = mutableStateListOf()
+
+    val bookmarkedPostsIds = mutableStateListOf<Int>()
+    val likedPostsIds = mutableStateListOf<Int>()
 
     fun getStories() {
         if (storiesUiState.value is UiState.Success) return
@@ -57,11 +62,11 @@ class HomeViewModel @Inject constructor(
 
     fun getPosts() {
         if (postsUiState.value is UiState.Success) return
-
         postsUiState.value = UiState.Loading
         viewModelScope.launch {
-            /** Getting the posts from the fake repository */
-            postRepository.getHomePosts().let { response ->
+            /** Wait for 4 seconds to simulate the loading from server process */
+            delay(4000)
+            postRepository.getFakePosts().let { response ->
                 when (response) {
                     is DataResponse.Success -> {
                         /** Got posts successfully */
@@ -79,4 +84,13 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateLikedPosts(id: Int) {
+        likedPostsIds.appendOrRemove(element = id)
+    }
+
+    fun updateBookmarkedPosts(id: Int) {
+        bookmarkedPostsIds.appendOrRemove(element = id)
+    }
+
 }

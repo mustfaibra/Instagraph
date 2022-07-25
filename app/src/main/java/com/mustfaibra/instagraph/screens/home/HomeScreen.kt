@@ -34,6 +34,9 @@ fun HomeScreen(
     val postsUiState by remember { homeViewModel.postsUiState }
     val posts = homeViewModel.posts
 
+    val likedPosts = homeViewModel.likedPostsIds
+    val bookmarkedPosts = homeViewModel.bookmarkedPostsIds
+
     /** Actual Home's UI */
     LazyColumn(
         modifier = Modifier
@@ -84,9 +87,15 @@ fun HomeScreen(
                         reactsCount = post.reacts.othersCount,
                         caption = post.caption,
                         date = post.date,
+                        postLiked = post.id in likedPosts,
+                        postBookmarked = post.id in bookmarkedPosts,
                         onMenuExpandChange = {},
-                        onPostLikeChange = {},
-                        onPostBookmarkChange = {},
+                        onPostLikeChange = {
+                            homeViewModel.updateLikedPosts(id = post.id)
+                        },
+                        onPostBookmarkChange = {
+                            homeViewModel.updateBookmarkedPosts(id = post.id)
+                        },
                     )
                 }
             }

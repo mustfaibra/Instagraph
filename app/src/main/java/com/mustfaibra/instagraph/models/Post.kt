@@ -2,7 +2,7 @@ package com.mustfaibra.instagraph.models
 
 data class Post(
     val id: Int,
-    val user: User,
+    var user: User,
     val location: String,
     val images: List<Int>,
     val caption: String = "Good Morning",

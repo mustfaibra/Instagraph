@@ -2,6 +2,7 @@ package com.mustfaibra.instagraph.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -16,29 +17,44 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.mustfaibra.instagraph.R
 import com.mustfaibra.instagraph.UserSession
+import com.mustfaibra.instagraph.models.Story
 import com.mustfaibra.instagraph.sealed.Screen
 import com.mustfaibra.instagraph.ui.theme.BrightRed
 import com.mustfaibra.instagraph.ui.theme.Dimension
+import com.mustfaibra.instagraph.ui.theme.Purple
+import com.mustfaibra.instagraph.ui.theme.PurpleRed
+import com.mustfaibra.instagraph.utils.getDp
 import com.mustfaibra.instagraph.utils.mirror
+import com.mustfaibra.instagraph.utils.myPlaceHolder
 
 @Composable
 fun CustomInputField(
@@ -269,5 +285,103 @@ fun PostGridItem(
                 tint = MaterialTheme.colors.background,
             )
         }
+    }
+}
+
+
+@Composable
+fun StoryItemLayout(
+    story: Story,
+    onStoryClicked: () -> Unit,
+) {
+    /** We must ensure that the very long username shouldn't mess the UI and should be clipped */
+    var storySize by remember { mutableStateOf(0) }
+    Column(
+        modifier = Modifier
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {
+                    onStoryClicked()
+                }
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(Dimension.xs),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .onGloballyPositioned {
+                    /** Here am gonna get the measurement that the parent box occupied */
+                    storySize = it.size.width
+                }
+                .clip(CircleShape)
+                .border(
+                    width = 2.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Purple, PurpleRed, BrightRed),
+                        tileMode = TileMode.Clamp,
+                    ),
+                    shape = CircleShape,
+                )
+                .padding(Dimension.xs)
+        ) {
+            /** Then the story's image */
+            Image(
+                painter = rememberImagePainter(data = story.user.profile),
+                contentDescription = "story image",
+                modifier = Modifier
+                    .size(Dimension.xlIcon.times(0.6f))
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+            )
+        }
+        Text(
+            modifier = Modifier.width(storySize.getDp()),
+            overflow = TextOverflow.Clip,
+            maxLines = 1,
+            text = story.user.userName,
+            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Medium),
+        )
+    }
+}
+
+@Composable
+fun StoryItemLayoutPH() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(Dimension.sm),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .clip(CircleShape)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.1f),
+                    shape = CircleShape,
+                )
+                .padding(Dimension.xs)
+        ) {
+            /** Then the fake story's image */
+            Box(
+                modifier = Modifier
+                    .size(Dimension.xlIcon.times(0.6f))
+                    .myPlaceHolder(
+                        visible = true,
+                        shape = CircleShape,
+                    ),
+            )
+        }
+        /** The fake story's owner username */
+        Box(
+            modifier = Modifier
+                .width(Dimension.xlIcon.times(0.6f))
+                .height(Dimension.sm)
+                .myPlaceHolder(
+                    visible = true,
+                    shape = CircleShape,
+                ),
+        )
     }
 }

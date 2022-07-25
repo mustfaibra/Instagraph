@@ -23,4 +23,6 @@
     <string name="sports">Sports</string>
     <string name="style">Style</string>
     <string name="shop">Shop</string>
+    <string name="posts">Posts</string>
+    <string name="tags">Tags</string>
 </resources>

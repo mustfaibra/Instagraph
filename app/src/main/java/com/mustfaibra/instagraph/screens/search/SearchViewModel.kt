@@ -6,16 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mustfaibra.instagraph.R
-import com.mustfaibra.instagraph.data.fake.FakeServicesImpl
 import com.mustfaibra.instagraph.models.Post
 import com.mustfaibra.instagraph.models.SearchFilter
+import com.mustfaibra.instagraph.repositories.PostRepository
 import com.mustfaibra.instagraph.sealed.DataResponse
 import com.mustfaibra.instagraph.sealed.Error
 import com.mustfaibra.instagraph.sealed.UiState
 import com.mustfaibra.instagraph.utils.appendOrRemove
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -23,7 +22,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val fakeServicesImpl: FakeServicesImpl,
+    private val postRepository: PostRepository,
 ) : ViewModel() {
     val lastSearchQuery = mutableStateOf("")
     val filters = listOf(
@@ -87,7 +86,7 @@ class SearchViewModel @Inject constructor(
     private fun getTrendingPosts() {
         trendingPostsUiState.value = UiState.Loading
         viewModelScope.launch {
-            fakeServicesImpl.getFakePosts().let { dataResponse ->
+            postRepository.getFakePosts().let { dataResponse ->
                 when (dataResponse) {
                     is DataResponse.Success -> {
                         /** Fetched successfully */

@@ -2,10 +2,17 @@ package com.mustfaibra.instagraph.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -15,18 +22,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,8 @@ import com.google.accompanist.pager.rememberPagerState
 import com.mustfaibra.instagraph.R
 import com.mustfaibra.instagraph.UserSession
 import com.mustfaibra.instagraph.components.DrawableButton
+import com.mustfaibra.instagraph.components.StoryItemLayout
+import com.mustfaibra.instagraph.components.StoryItemLayoutPH
 import com.mustfaibra.instagraph.models.Story
 import com.mustfaibra.instagraph.models.User
 import com.mustfaibra.instagraph.sealed.UiState
@@ -48,10 +51,6 @@ import com.mustfaibra.instagraph.ui.theme.Blue
 import com.mustfaibra.instagraph.ui.theme.BrightRed
 import com.mustfaibra.instagraph.ui.theme.Dimension
 import com.mustfaibra.instagraph.ui.theme.LightBlack
-import com.mustfaibra.instagraph.ui.theme.Purple
-import com.mustfaibra.instagraph.ui.theme.PurpleRed
-import com.mustfaibra.instagraph.utils.getDp
-import com.mustfaibra.instagraph.utils.myPlaceHolder
 
 
 @Composable
@@ -225,103 +224,6 @@ fun StoriesSection(
 }
 
 @Composable
-fun StoryItemLayout(
-    story: Story,
-    onStoryClicked: () -> Unit,
-) {
-    /** We must ensure that the very long username shouldn't mess the UI and should be clipped */
-    var storySize by remember { mutableStateOf(0) }
-    Column(
-        modifier = Modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    onStoryClicked()
-                }
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimension.xs),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .onGloballyPositioned {
-                    /** Here am gonna get the measurement that the parent box occupied */
-                    storySize = it.size.width
-                }
-                .clip(CircleShape)
-                .border(
-                    width = 2.dp,
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Purple, PurpleRed, BrightRed),
-                        tileMode = TileMode.Clamp,
-                    ),
-                    shape = CircleShape,
-                )
-                .padding(Dimension.xs)
-        ) {
-            /** Then the story's image */
-            Image(
-                painter = rememberImagePainter(data = story.user.profile),
-                contentDescription = "story image",
-                modifier = Modifier
-                    .size(Dimension.xlIcon.times(0.6f))
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop,
-            )
-        }
-        Text(
-            modifier = Modifier.width(storySize.getDp()),
-            overflow = TextOverflow.Clip,
-            maxLines = 1,
-            text = story.user.userName,
-            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Medium),
-        )
-    }
-}
-
-@Composable
-fun StoryItemLayoutPH() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimension.sm),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .clip(CircleShape)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.1f),
-                    shape = CircleShape,
-                )
-                .padding(Dimension.xs)
-        ) {
-            /** Then the fake story's image */
-            Box(
-                modifier = Modifier
-                    .size(Dimension.xlIcon.times(0.6f))
-                    .myPlaceHolder(
-                        visible = true,
-                        shape = CircleShape,
-                    ),
-            )
-        }
-        /** The fake story's owner username */
-        Box(
-            modifier = Modifier
-                .width(Dimension.xlIcon.times(0.6f))
-                .height(Dimension.sm)
-                .myPlaceHolder(
-                    visible = true,
-                    shape = CircleShape,
-                ),
-        )
-    }
-}
-
-@Composable
 fun PostItemLayout(
     ownerName: String,
     ownerProfile: Int,
@@ -331,6 +233,8 @@ fun PostItemLayout(
     reactsCount: Int,
     caption: String,
     date: String,
+    postLiked: Boolean,
+    postBookmarked: Boolean,
     onMenuExpandChange: () -> Unit,
     onPostLikeChange: () -> Unit,
     onPostBookmarkChange: () -> Unit,
@@ -391,6 +295,8 @@ fun PostItemLayout(
         /** Now, the exciting part, the post's image/images with the reactions */
         PostImagesWithReactions(
             images = images,
+            postLiked = postLiked,
+            postBookmarked = postBookmarked,
             onPostLikeChange = onPostLikeChange,
             onPostBookmarkChange = onPostBookmarkChange,
         )
@@ -408,6 +314,8 @@ fun PostItemLayout(
 @Composable
 fun PostImagesWithReactions(
     images: List<Int>,
+    postLiked: Boolean,
+    postBookmarked: Boolean,
     onPostLikeChange: () -> Unit,
     onPostBookmarkChange: () -> Unit,
 ) {
@@ -467,8 +375,11 @@ fun PostImagesWithReactions(
                 DrawableButton(
                     backgroundColor = MaterialTheme.colors.background,
                     shape = CircleShape,
-                    iconTint = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
-                    painter = painterResource(id = R.drawable.ic_heart),
+                    iconTint = if(postLiked) BrightRed
+                        else MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
+                    painter = painterResource(
+                        id = if(postLiked) R.drawable.ic_heart_filled else R.drawable.ic_heart
+                    ),
                     onButtonClicked = onPostLikeChange,
                 )
                 DrawableButton(
@@ -518,7 +429,9 @@ fun PostImagesWithReactions(
                 backgroundColor = MaterialTheme.colors.background,
                 iconTint = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
                 shape = CircleShape,
-                painter = painterResource(id = R.drawable.ic_bookmark),
+                painter = painterResource(id = if(postBookmarked) R.drawable.ic_bookmark_filled
+                    else R.drawable.ic_bookmark
+                ),
                 onButtonClicked = onPostBookmarkChange,
             )
         }
@@ -542,7 +455,7 @@ fun ReactsWithCaption(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimension.pagePadding.div(2))
-        ){
+        ) {
             Image(
                 painter = painterResource(id = recentReactUser.profile),
                 contentDescription = "post's owner image",
