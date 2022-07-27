@@ -14,50 +14,9 @@ import androidx.core.text.layoutDirection
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
-import com.mustfaibra.instagraph.sealed.DataResponse
-import com.mustfaibra.instagraph.sealed.Error
-import io.ktor.client.call.*
-import io.ktor.client.features.*
-import io.ktor.client.statement.*
-import org.json.JSONException
-import org.json.JSONObject
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
-
-/** An extension function that is used to convert the API response to a JSONObject & return the field message from it */
-suspend fun HttpResponse.getMessage(): String {
-    /** The json string */
-    val responseAsString = this.receive<String>()
-    /** convert the json string to a JSONObject that we can extract the message from it */
-    return try {
-        val jsonObj = JSONObject(responseAsString)
-        jsonObj.getString("message") ?: "No message provided !"
-    } catch (exception: JSONException) {
-        "Server error, please call the support!"
-    }
-}
-
-/**
- * An extension function that is used to handle the exception that occur when fetching from server
- * it send the report log - later - to server and return a valid response
- */ fun <T> Throwable.handleResponseException(): DataResponse<T> {
-    return when (this) {
-        is RedirectResponseException -> {
-            DataResponse.Error(error = Error.Empty)
-        }
-        is ClientRequestException -> {
-            DataResponse.Error(error = Error.Network)
-        }
-        is ServerResponseException -> {
-            DataResponse.Error(error = Error.Unknown)
-        }
-        else -> {
-            DataResponse.Error(error = Error.Network)
-        }
-    }
-}
-
 
 /** An extension function that is used to mirror the compose icons when using rtl languages like arabic and urdu */
 fun Modifier.mirror(): Modifier {

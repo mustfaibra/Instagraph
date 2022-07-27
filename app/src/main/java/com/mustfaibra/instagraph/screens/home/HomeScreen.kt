@@ -16,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mustfaibra.instagraph.providers.LocalNavHost
+import com.mustfaibra.instagraph.sealed.Screen
 import com.mustfaibra.instagraph.sealed.UiState
 import com.mustfaibra.instagraph.ui.theme.Dimension
 
@@ -24,6 +26,8 @@ import com.mustfaibra.instagraph.ui.theme.Dimension
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val navController = LocalNavHost.current
+
     LaunchedEffect(key1 = Unit) {
         homeViewModel.getStories()
         homeViewModel.getPosts()
@@ -46,7 +50,12 @@ fun HomeScreen(
     ) {
         /**  First the top bar */
         stickyHeader {
-            HomeTopBar()
+            HomeTopBar(
+                onChatsClicked = {
+                    navController.navigate(Screen.Chats.route)
+                }
+            )
+            Divider()
         }
         item {
             /** Then the stories section, my favorite part actually  */
@@ -56,7 +65,6 @@ fun HomeScreen(
                     .background(MaterialTheme.colors.background),
                 verticalArrangement = Arrangement.spacedBy(Dimension.xs),
             ) {
-                Divider()
                 StoriesSection(
                     stories = stories,
                     uiState = storiesUiState,

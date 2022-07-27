@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mustfaibra.instagraph.components.AppBottomNav
 import com.mustfaibra.instagraph.providers.LocalNavHost
+import com.mustfaibra.instagraph.screens.chats.ChatsScreen
 import com.mustfaibra.instagraph.screens.home.HomeScreen
 import com.mustfaibra.instagraph.screens.login.LoginScreen
 import com.mustfaibra.instagraph.screens.notifications.NotificationScreen
@@ -37,12 +38,14 @@ fun HolderScreen(
 
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
             NavHost(
                 modifier = Modifier.weight(1f),
                 navController = controller,
-                startDestination = Screen.Login.route
+                startDestination = Screen.Splash.route
             ) {
                 composable(Screen.Splash.route) {
                     onStatusBarColorChange(MaterialTheme.colors.background)
@@ -56,6 +59,13 @@ fun HolderScreen(
                     onStatusBarColorChange(MaterialTheme.colors.background)
                     HomeScreen()
                 }
+                composable(Screen.Search.route) {
+                    onStatusBarColorChange(MaterialTheme.colors.background)
+                    SearchScreen()
+                }
+                composable(Screen.AddPost.route) {
+                    onStatusBarColorChange(MaterialTheme.colors.background)
+                }
                 composable(Screen.Notifications.route) {
                     onStatusBarColorChange(MaterialTheme.colors.background)
                     NotificationScreen()
@@ -64,9 +74,9 @@ fun HolderScreen(
                     onStatusBarColorChange(MaterialTheme.colors.background)
                     ProfileScreen()
                 }
-                composable(Screen.Search.route) {
+                composable(Screen.Chats.route) {
                     onStatusBarColorChange(MaterialTheme.colors.background)
-                    SearchScreen()
+                    ChatsScreen()
                 }
             }
             Divider()

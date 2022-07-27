@@ -8,13 +8,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.mustfaibra.instagraph.R
 
-val font = FontFamily(
+val readEx = FontFamily(
     Font(resId = R.font.readex_extra_light, weight = FontWeight.ExtraLight),
     Font(resId = R.font.readex_light, weight = FontWeight.Light),
     Font(resId = R.font.readex_regular, weight = FontWeight.Normal),
     Font(resId = R.font.readex_medium, weight = FontWeight.Medium),
     Font(resId = R.font.readex_semi_bold, weight = FontWeight.SemiBold),
     Font(resId = R.font.readex_bold, weight = FontWeight.Bold),
+)
+
+val blueStar = FontFamily(
+    Font(resId = R.font.bluestar_bold, weight = FontWeight.Bold),
+    Font(resId = R.font.bluestar_medium, weight = FontWeight.Medium),
+    Font(resId = R.font.bluestar_regular, weight = FontWeight.Normal),
 )
 
 // Set of Material typography styles to start with
@@ -63,5 +69,5 @@ val Typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 14.sp
     ),
-    defaultFontFamily = font,
+    defaultFontFamily = readEx,
 )

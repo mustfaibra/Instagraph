@@ -1,18 +1,16 @@
 package com.mustfaibra.instagraph.screens.home
 
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateInt
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -21,14 +19,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,33 +56,31 @@ import com.mustfaibra.instagraph.ui.theme.Blue
 import com.mustfaibra.instagraph.ui.theme.BrightRed
 import com.mustfaibra.instagraph.ui.theme.Dimension
 import com.mustfaibra.instagraph.ui.theme.LightBlack
+import com.mustfaibra.instagraph.ui.theme.blueStar
+import com.mustfaibra.instagraph.utils.getDp
+import timber.log.Timber
 
 
 @Composable
-fun HomeTopBar() {
+fun HomeTopBar(
+    onChatsClicked: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colors.background)
-            .padding(horizontal = Dimension.pagePadding),
+            .padding(horizontal = Dimension.pagePadding, vertical = Dimension.pagePadding),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DrawableButton(
-            painter = painterResource(id = R.drawable.ic_camera),
-            iconSize = Dimension.smIcon,
-            shape = CircleShape,
-            iconTint = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
-            backgroundColor = Color.Transparent,
-            onButtonClicked = {
-
-            }
+        Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.h4.copy(
+                fontFamily = blueStar,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black,
+            ),
         )
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_instagram_logo_word),
-//            contentDescription = "logo word",
-//            modifier = Modifier.size(Dimension.xlIcon),
-//        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimension.pagePadding),
@@ -109,9 +112,7 @@ fun HomeTopBar() {
                     shape = CircleShape,
                     iconTint = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
                     backgroundColor = Color.Transparent,
-                    onButtonClicked = {
-
-                    }
+                    onButtonClicked = onChatsClicked
                 )
                 Box(
                     modifier = Modifier
@@ -259,7 +260,7 @@ fun PostItemLayout(
                 /** First the owner's profile image */
                 Image(
                     painter = rememberImagePainter(data = ownerProfile),
-                    contentDescription = "story image",
+                    contentDescription = "owner's image",
                     modifier = Modifier
                         .size(Dimension.mdIcon)
                         .clip(CircleShape),
@@ -320,6 +321,51 @@ fun PostImagesWithReactions(
     onPostBookmarkChange: () -> Unit,
 ) {
     val pagerState = rememberPagerState()
+    var showHeart by remember { mutableStateOf(false) }
+    var heartSize by remember { mutableStateOf(0) }
+    var offset by remember { mutableStateOf(0) }
+    val animationDuration = 1500
+
+    val heartTransition =
+        updateTransition(targetState = showHeart, label = "heart")
+
+    /** Keep track of when animation end, we should hide the heart icon */
+    animateIntAsState(
+        targetValue = heartSize,
+        animationSpec = TweenSpec(durationMillis = animationDuration),
+        finishedListener = {
+            Timber.d("Update size ... ")
+            showHeart = false
+            heartSize = 0
+        }
+    )
+    val animatedHeartSize by heartTransition.animateInt(
+        label = "size",
+        transitionSpec = {
+            TweenSpec(durationMillis = animationDuration)
+        },
+        targetValueByState = {
+            if (it) heartSize else 0
+        }
+    )
+    val animatedOffset by heartTransition.animateInt(
+        label = "offset",
+        transitionSpec = {
+            TweenSpec(durationMillis = animationDuration)
+        },
+        targetValueByState = {
+            if (it) offset else 0
+        }
+    )
+    val animatedAlpha by heartTransition.animateFloat(
+        label = "alpha",
+        transitionSpec = {
+            TweenSpec(durationMillis = animationDuration)
+        },
+        targetValueByState = {
+            if (it) 0f else 1f
+        }
+    )
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -328,6 +374,7 @@ fun PostImagesWithReactions(
         val imageModifier = if (images.size > 1) Modifier
             .fillMaxWidth()
             .aspectRatio(1.2f) else Modifier.fillMaxWidth()
+
         Box(modifier = Modifier.fillMaxWidth()) {
             /** Horizontal pager section */
             HorizontalPager(
@@ -340,7 +387,20 @@ fun PostImagesWithReactions(
                 Image(
                     painter = painterResource(id = images[this.currentPage]),
                     contentDescription = "post image",
-                    modifier = imageModifier,
+                    modifier = imageModifier
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    /** Show an increasing size heart when favorite is false */
+                                    if (!postLiked) {
+                                        showHeart = true
+                                        offset = this.size.height
+                                        heartSize = this.size.height
+                                    }
+                                    onPostLikeChange()
+                                },
+                            )
+                        },
                     contentScale = ContentScale.Crop,
                 )
             }
@@ -359,6 +419,20 @@ fun PostImagesWithReactions(
                     color = MaterialTheme.colors.background,
                 )
             }
+
+            /** If the user double clicked the post's image and it's favorite now, show a heart icon floating up */
+            if (showHeart) {
+                Icon(
+                    imageVector = Icons.Rounded.Favorite,
+                    contentDescription = null,
+                    tint = Color.Red,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(animatedHeartSize.getDp())
+                        .offset(y = -animatedOffset.getDp())
+                        .alpha(animatedAlpha)
+                )
+            }
         }
         /** Reaction on post actions : like comment, like, share */
         Row(
@@ -375,10 +449,10 @@ fun PostImagesWithReactions(
                 DrawableButton(
                     backgroundColor = MaterialTheme.colors.background,
                     shape = CircleShape,
-                    iconTint = if(postLiked) BrightRed
-                        else MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
+                    iconTint = if (postLiked) BrightRed
+                    else MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
                     painter = painterResource(
-                        id = if(postLiked) R.drawable.ic_heart_filled else R.drawable.ic_heart
+                        id = if (postLiked) R.drawable.ic_heart_filled else R.drawable.ic_heart
                     ),
                     onButtonClicked = onPostLikeChange,
                 )
@@ -429,8 +503,8 @@ fun PostImagesWithReactions(
                 backgroundColor = MaterialTheme.colors.background,
                 iconTint = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
                 shape = CircleShape,
-                painter = painterResource(id = if(postBookmarked) R.drawable.ic_bookmark_filled
-                    else R.drawable.ic_bookmark
+                painter = painterResource(id = if (postBookmarked) R.drawable.ic_bookmark_filled
+                else R.drawable.ic_bookmark
                 ),
                 onButtonClicked = onPostBookmarkChange,
             )

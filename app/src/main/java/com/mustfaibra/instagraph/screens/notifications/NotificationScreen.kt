@@ -72,17 +72,12 @@ fun NotificationScreen(
                             .fillMaxWidth()
                             .background(MaterialTheme.colors.background)
                             .clickable { }
-                            .padding(
-                                PaddingValues(
-                                    vertical = Dimension.pagePadding.div(2),
-                                    horizontal = Dimension.pagePadding,
-                                )
-                            ),
+                            .padding(Dimension.pagePadding),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = "Follow Requests",
-                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f)
                         )
                     }

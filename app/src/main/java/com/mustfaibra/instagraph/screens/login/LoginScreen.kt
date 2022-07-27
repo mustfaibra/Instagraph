@@ -3,7 +3,15 @@ package com.mustfaibra.instagraph.screens.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -17,8 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustfaibra.instagraph.R
@@ -28,6 +37,7 @@ import com.mustfaibra.instagraph.sealed.Screen
 import com.mustfaibra.instagraph.sealed.UiState
 import com.mustfaibra.instagraph.ui.theme.Dimension
 import com.mustfaibra.instagraph.ui.theme.SkyBlue
+import com.mustfaibra.instagraph.ui.theme.blueStar
 
 @Composable
 fun LoginScreen(
@@ -60,16 +70,22 @@ fun LoginScreen(
         ) {
 
             /** First we put the logo */
-            Image(
-                painter = painterResource(id = R.drawable.ic_instagram_logo_word),
-                contentDescription = "profile image",
+            Text(
+                text = stringResource(id = R.string.app_name),
+                style = MaterialTheme.typography.h2.copy(
+                    fontFamily = blueStar,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black,
+                ),
             )
             Spacer(modifier = Modifier.height(Dimension.pagePadding.times(3)))
             /** Then the user's profile image */
             Image(
                 painter = painterResource(id = user.profile),
                 contentDescription = "profile image",
-                modifier = Modifier.size(Dimension.xlIcon.times(1.3f)).clip(CircleShape),
+                modifier = Modifier
+                    .size(Dimension.xlIcon.times(1.3f))
+                    .clip(CircleShape),
             )
             Spacer(modifier = Modifier.height(Dimension.pagePadding))
             /** The the user's name */

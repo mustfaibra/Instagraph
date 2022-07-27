@@ -82,6 +82,7 @@ fun SearchScreen(
                 },
                 onValueChange = {
                     /** What happens when the input value changes */
+                    searchViewModel.updateSearchQuery(query = it)
                 },
                 onFocusChange = {
                     /** Handle the event of input focus state change */

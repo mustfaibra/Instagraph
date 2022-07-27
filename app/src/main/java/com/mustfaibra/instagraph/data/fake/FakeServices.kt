@@ -1,5 +1,6 @@
 package com.mustfaibra.instagraph.data.fake
 
+import com.mustfaibra.instagraph.models.Chat
 import com.mustfaibra.instagraph.models.Featured
 import com.mustfaibra.instagraph.models.MyNotification
 import com.mustfaibra.instagraph.models.Post
@@ -25,4 +26,8 @@ interface FakeServices {
     suspend fun findUserByUsername(userName: String): DataResponse<User?>
 
     suspend fun getFakeNotifications(): DataResponse<List<MyNotification>>
+
+    suspend fun getFakeChats() : DataResponse<List<Chat>>
+
+    suspend fun getFakeOnlineUsers(): DataResponse<List<User>>
 }

@@ -10,5 +10,6 @@ data class User(
     var posts: List<Post> = mutableListOf(),
     val followers: List<User> = mutableListOf(),
     val following: List<User> = mutableListOf(),
+    val isOnline: Boolean = true,
     val token: String? = null,
 )

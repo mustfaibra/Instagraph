@@ -70,27 +70,25 @@ fun ProfileScreen(
     val featuredStories = profileViewModel.featuredStories
 
     loggedUser?.let { user ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(count = 3)
-        ) {
+        LazyVerticalGrid(columns = GridCells.Fixed(count = 3)) {
+            /** first we put the sticky top bar */
             item(
                 span = {
                     GridItemSpan(3)
                 }
             ) {
-                /** first we put the sticky top bar */
                 ProfileStickyToolbar(
                     userName = user.userName,
                     onUserNameClicked = {},
                     onMenuClicked = {},
                 )
             }
+            /** Then the user's profile info with stats */
             item(
                 span = {
                     GridItemSpan(3)
                 }
             ) {
-                /** Then the user's profile info with stats */
                 UserInfoWithStats(
                     modifier = Modifier.padding(vertical = Dimension.pagePadding),
                     profile = user.profile,
@@ -101,24 +99,24 @@ fun ProfileScreen(
                     followingCount = user.following.size,
                 )
             }
+            /** Now to the stories that I featured on my profile */
             item(
                 span = {
                     GridItemSpan(3)
                 }
             ) {
-                /** Now to the stories that I featured on my profile */
                 FeaturedStoriesSection(
                     featuredStories = featuredStories,
                     onAddNewFeaturedStoryClicked = {},
                     onFeaturedStoryClicked = {},
                 )
             }
+            /** Now the profile's tabs */
             item(
                 span = {
                     GridItemSpan(3)
                 }
             ) {
-                /** Now the profile's tabs */
                 ProfileTabSection(
                     tabs = listOf(Tab.Posts, Tab.Tags),
                     activeTab = activeTab,
@@ -132,6 +130,7 @@ fun ProfileScreen(
                 is Tab.Posts -> {
                     items(user.posts) { post ->
                         PostGridItem(
+                            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                             cover = post.images.first(),
                             imagesCount = post.images.size
                         ) {
@@ -139,9 +138,7 @@ fun ProfileScreen(
                         }
                     }
                 }
-                is Tab.Tags -> {
-
-                }
+                is Tab.Tags -> {}
             }
         }
     } ?: LocalNavHost.current.popBackStack()
@@ -157,13 +154,11 @@ fun ProfileStickyToolbar(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colors.background)
-            .padding(horizontal = Dimension.pagePadding),
+            .padding(Dimension.pagePadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Box(
-            modifier = Modifier.size(Dimension.smIcon)
-        )
+        Box(modifier = Modifier.size(Dimension.smIcon))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimension.xs),
@@ -171,7 +166,7 @@ fun ProfileStickyToolbar(
                 .clip(CircleShape)
                 .clickable { onUserNameClicked() }
                 .padding(Dimension.xs),
-        ) {
+        ){
             Icon(
                 imageVector = Icons.Rounded.Lock,
                 tint = MaterialTheme.colors.onBackground,
@@ -303,7 +298,7 @@ fun StatItemLayout(
         Text(
             text = title,
             style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
-            color = LightBlack,
+            color = LightBlack.copy(alpha = 0.8f),
         )
     }
 }

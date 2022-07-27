@@ -47,6 +47,7 @@ import coil.compose.rememberImagePainter
 import com.mustfaibra.instagraph.R
 import com.mustfaibra.instagraph.UserSession
 import com.mustfaibra.instagraph.models.Story
+import com.mustfaibra.instagraph.models.User
 import com.mustfaibra.instagraph.sealed.Screen
 import com.mustfaibra.instagraph.ui.theme.BrightRed
 import com.mustfaibra.instagraph.ui.theme.Dimension

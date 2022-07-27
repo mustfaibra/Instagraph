@@ -3,7 +3,7 @@ package com.mustfaibra.instagraph.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val LightGray = Color(0xFFE9E9E9)
-val Gray = Color(0xFFD6D6D6)
+val Gray = Color(0xFFCACACA)
 val SkyBlue = Color(0xFF5876FF)
 val Blue = Color(0xFF405DE6)
 val Purple = Color(0xFF833AB4)

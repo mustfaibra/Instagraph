@@ -2,7 +2,9 @@ package com.mustfaibra.instagraph.data.fake
 
 import com.mustfaibra.instagraph.R
 import com.mustfaibra.instagraph.UserSession
+import com.mustfaibra.instagraph.models.Chat
 import com.mustfaibra.instagraph.models.Featured
+import com.mustfaibra.instagraph.models.Message
 import com.mustfaibra.instagraph.models.MyNotification
 import com.mustfaibra.instagraph.models.Post
 import com.mustfaibra.instagraph.models.PostReacts
@@ -203,6 +205,35 @@ class FakeServicesImpl : FakeServices {
         return DataResponse.Success(data = posts)
     }
 
+    override suspend fun getFakeChats(): DataResponse<List<Chat>> {
+        return DataResponse.Success(
+            data = users.mapIndexed {index, user->
+                Chat(
+                    id = index,
+                    otherUser = user,
+                    lastMessage = Message(
+                        id = index,
+                        body = listOf(
+                            "Hi mustafa, how are you? ✨",
+                            "Wanna go out?🙄",
+                            "Thank you so much 🤩",
+                            "I can't right now 😔"
+                        )[index],
+                        sender = user,
+                        receiver = UserSession.user,
+                        time = "${index}h",
+                    )
+                )
+            }
+        )
+    }
+
+    override suspend fun getFakeOnlineUsers(): DataResponse<List<User>> {
+        return DataResponse.Success(
+            data = users.filter { it.isOnline }
+        )
+    }
+
     override suspend fun getFakeStories(): DataResponse<List<Story>> {
         /** Wait for 4 seconds to simulate the loading from server process */
         delay(4000)
@@ -210,8 +241,6 @@ class FakeServicesImpl : FakeServices {
     }
 
     override suspend fun getFakeFeaturedStories(): DataResponse<List<Featured>> {
-        /** Wait for 4 seconds to simulate the loading from server process */
-        delay(4000)
         return UserSession.user?.let {
             DataResponse.Success(
                 data = images.mapIndexed { index, drawable ->
