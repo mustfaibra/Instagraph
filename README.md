@@ -31,7 +31,9 @@ In this app, I used the following :
 Please don't forget the stars amigo ⭐⭐⭐⭐⭐ 
 
 If you have any thoughts or need a help, connect with me on :
+
 [Twitter](www.twitter.com/mustfaibra)
+
 [LinkedIn](https://www.linkedin.com/in/mustafa-ibrahim-58b918206)
 
 Happy coding !
